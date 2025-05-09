@@ -1,6 +1,13 @@
 @import "tailwindcss";
 
-@keyframes fadeIn {
+
+  @layer base {
+    body {
+      @apply antialiased text-gray-800;
+    }
+  }
+  
+  @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
   }
@@ -17,11 +24,12 @@
   
   ::-webkit-scrollbar-track {
     background: #f1f1f1;
+    border-radius: 10px;
   }
   
   ::-webkit-scrollbar-thumb {
     background: #888;
-    border-radius: 4px;
+    border-radius: 10px;
   }
   
   ::-webkit-scrollbar-thumb:hover {
@@ -48,4 +56,39 @@
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
+  }
+  
+  /* Gradient text */
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+  }
+  
+  /* Smooth transitions */
+  .transition-slow {
+    transition: all 0.5s ease;
+  }
+  
+  /* Custom shadows */
+  .shadow-book {
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+  
+  /* Three.js canvas */
+  canvas {
+    @apply w-full h-full;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 1s ease-out forwards;
   }
