@@ -1,15 +1,18 @@
 import { useState, useEffect } from 'react'
 import BookCard from './components/BookCard'
 import SearchBar from './components/SearchBar'
+import BookModal from './components/BookModal'
 
 function App() {
   const [books, setBooks] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  const [searchTerm, setSearchTerm] = useState('react')
+  const [searchTerm, setSearchTerm] = useState('')
   const [suggestions, setSuggestions] = useState([])
+  const [selectedBook, setSelectedBook] = useState(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
-  const API_KEY = 'AIzaSyCZRNEZdlsfjqUNBp8DG_BLh3PhMZpRgaE'
+  const API_KEY = 'AIzaSyBwf9vuLISlp_GBfDjuQvfilx1SVKLr2Wc'
 
   useEffect(() => {
     if (searchTerm.trim() === '') return
@@ -23,7 +26,10 @@ function App() {
 
   useEffect(() => {
     if (searchTerm.length > 2) {
-      fetchSuggestions(searchTerm)
+      const timer = setTimeout(() => {
+        fetchSuggestions(searchTerm)
+      }, 300)
+      return () => clearTimeout(timer)
     } else {
       setSuggestions([])
     }
@@ -73,7 +79,18 @@ function App() {
 
   const handleSuggestionClick = (suggestion) => {
     setSearchTerm(suggestion)
-    setSuggestions([])
+    setSuggestions([]) // Clear suggestions immediately
+    fetchBooks(suggestion)
+  }
+
+  const handleBookClick = (book) => {
+    setSelectedBook(book)
+    setIsModalOpen(true)
+  }
+
+  const closeModal = () => {
+    setIsModalOpen(false)
+    setSelectedBook(null)
   }
 
   return (
@@ -93,7 +110,11 @@ function App() {
         
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8">
           {books.map((book) => (
-            <BookCard key={book.id} book={book} />
+            <BookCard 
+              key={book.id} 
+              book={book} 
+              onClick={() => handleBookClick(book)}
+            />
           ))}
         </div>
         
@@ -103,6 +124,10 @@ function App() {
           </div>
         )}
       </div>
+
+      {isModalOpen && selectedBook && (
+        <BookModal book={selectedBook} onClose={closeModal} />
+      )}
     </div>
   )
 }
