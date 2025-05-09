@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
+import { motion } from 'framer-motion'
 
-const BookModal = ({ book, onClose }) => {
+const BookModal = ({ book, onClose, onAddToFavorites, onAddToCart, isFavorite }) => {
   const volumeInfo = book.volumeInfo || {}
   const imageLinks = volumeInfo.imageLinks || {}
   const saleInfo = book.saleInfo || {}
@@ -49,14 +50,22 @@ const BookModal = ({ book, onClose }) => {
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div 
+    <motion.div 
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <motion.div 
         className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto relative"
         onClick={(e) => e.stopPropagation()}
+        initial={{ scale: 0.9 }}
+        animate={{ scale: 1 }}
+        exit={{ scale: 0.9 }}
       >
         <button 
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 transition-colors"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -76,6 +85,40 @@ const BookModal = ({ book, onClose }) => {
                 ) : (
                   <span className="text-gray-500">No image available</span>
                 )}
+              </div>
+              
+              <div className="mt-4 flex gap-2">
+                <button 
+                  onClick={() => onAddToFavorites(book)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg ${isFavorite ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-700'} hover:bg-gray-200 transition-colors w-full justify-center`}
+                >
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    className="h-5 w-5" 
+                    fill={isFavorite ? "red" : "none"} 
+                    viewBox="0 0 24 24" 
+                    stroke={isFavorite ? "red" : "currentColor"}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                  </svg>
+                  {isFavorite ? 'Saved' : 'Save'}
+                </button>
+                
+                <button 
+                  onClick={() => onAddToCart(book)}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors w-full justify-center"
+                >
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    className="h-5 w-5" 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                  Add to Cart
+                </button>
               </div>
             </div>
             
@@ -112,7 +155,6 @@ const BookModal = ({ book, onClose }) => {
                 )}
               </div>
               
-              {/* Price Information Section */}
               <div className="mb-4">
                 <h4 className="text-sm font-semibold text-gray-500">Price</h4>
                 <div className="flex items-center gap-2">
@@ -201,8 +243,8 @@ const BookModal = ({ book, onClose }) => {
             )}
           </div>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   )
 }
 
