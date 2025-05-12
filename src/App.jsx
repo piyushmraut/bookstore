@@ -568,7 +568,7 @@ function App() {
             transition={{ duration: 0.5 }}
           >
             <div className="mb-8">
-              <h2 className="text-3xl font-bold mb-6 text-gray-800">
+              <h2 className="text-3xl font-bold mb-6 text-violet-800">
                 {activeCategory} Books
               </h2>
               <Categories
