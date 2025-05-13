@@ -192,18 +192,78 @@ function App() {
     });
   };
 
+  // const addToCart = (book) => {
+  //   setCart((prev) => {
+  //     const existingItem = prev.find((item) => item.id === book.id);
+  //     if (existingItem) {
+  //       return prev.map((item) =>
+  //         item.id === book.id ? { ...item, quantity: item.quantity + 1 } : item
+  //       );
+  //     } else {
+  //       return [...prev, { ...book, quantity: 1 }];
+  //     }
+  //   });
+  // };
+
+  // const addToCart = (book) => {
+  //   // Generate a fixed price for the book if it doesn't have one
+  //   const price =
+  //     book.saleInfo?.retailPrice?.amount || (Math.random() * 20 + 5).toFixed(2);
+
+  //   setCart((prev) => {
+  //     const existingItem = prev.find((item) => item.id === book.id);
+  //     if (existingItem) {
+  //       return prev.map((item) =>
+  //         item.id === book.id ? { ...item, quantity: item.quantity + 1 } : item
+  //       );
+  //     } else {
+  //       return [
+  //         ...prev,
+  //         {
+  //           ...book,
+  //           quantity: 1,
+  //           price: parseFloat(price), // Store the price as a number
+  //         },
+  //       ];
+  //     }
+  //   });
+  // };
   const addToCart = (book) => {
-    setCart((prev) => {
-      const existingItem = prev.find((item) => item.id === book.id);
-      if (existingItem) {
-        return prev.map((item) =>
-          item.id === book.id ? { ...item, quantity: item.quantity + 1 } : item
-        );
-      } else {
-        return [...prev, { ...book, quantity: 1 }];
-      }
-    });
+  // Generate a fixed price for the book if it doesn't have one
+  const price = book.saleInfo?.retailPrice?.amount || (Math.random() * 20 + 5).toFixed(2);
+  
+  // Create a copy of the book with the price if it didn't have one
+  const bookWithPrice = {
+    ...book,
+    saleInfo: book.saleInfo?.retailPrice 
+      ? book.saleInfo 
+      : {
+          ...book.saleInfo,
+          retailPrice: {
+            amount: parseFloat(price),
+            currencyCode: "USD"
+          }
+        }
   };
+
+  setCart((prev) => {
+    const existingItem = prev.find((item) => item.id === book.id);
+    if (existingItem) {
+      return prev.map((item) =>
+        item.id === book.id ? { ...item, quantity: item.quantity + 1 } : item
+      );
+    } else {
+      return [
+        ...prev,
+        {
+          ...bookWithPrice,
+          quantity: 1,
+          price: parseFloat(price),
+        },
+      ];
+    }
+  });
+};
 
   const isFavorite = (book) => {
     return favorites.some((fav) => fav.id === book.id);
@@ -1481,7 +1541,8 @@ function App() {
                           </p>
                           <div className="mt-2">
                             <span className="text-indigo-600 font-medium">
-                              ${(Math.random() * 20 + 5).toFixed(2)}
+                              {/* ${(Math.random() * 20 + 5).toFixed(2)} */}$
+                              {item.price.toFixed(2)}
                             </span>
                           </div>
                         </div>
@@ -1597,13 +1658,26 @@ function App() {
                         Total items:{" "}
                         <span className="font-bold">{getCartCount()}</span>
                       </h3>
-                      <h3 className="font-bold text-xl text-indigo-900 mt-1">
+                      {/* <h3 className="font-bold text-xl text-indigo-900 mt-1">
                         Total price:{" "}
                         <span className="text-2xl">
                           $
                           {(getCartCount() * (Math.random() * 10 + 5)).toFixed(
                             2
                           )}
+                        </span>
+                      </h3> */}
+                      <h3 className="font-bold text-xl text-indigo-900 mt-1">
+                        Total price:{" "}
+                        <span className="text-2xl">
+                          $
+                          {cart
+                            .reduce(
+                              (total, item) =>
+                                total + item.price * item.quantity,
+                              0
+                            )
+                            .toFixed(2)}
                         </span>
                       </h3>
                     </div>
@@ -1837,36 +1911,32 @@ function App() {
                 Categories
               </motion.h3>
               <div className="grid grid-cols-2 gap-3 ">
-                {[
-                  "Fiction",
-                  "Mystery",
-                  "Romance",
-                  "Biography",
-                  "History",
-                ].map((category, i) => (
-                  <motion.button
-                    key={category}
-                    className="text-blue-200 hover:text-white text-sm transition-colors text-left cursor-pointer"
-                    whileHover={{
-                      x: 5,
-                      color: "#ffffff",
-                    }}
-                    transition={{
-                      type: "spring",
-                      stiffness: 300,
-                      delay: 0.3 + i * 0.05,
-                    }}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    onClick={() => {
-                      setActiveTab("categories");
-                      setActiveCategory(category);
-                      window.scrollTo({ top: 0, behavior: "smooth" });
-                    }}
-                  >
-                    {category}
-                  </motion.button>
-                ))}
+                {["Fiction", "Mystery", "Romance", "Biography", "History"].map(
+                  (category, i) => (
+                    <motion.button
+                      key={category}
+                      className="text-blue-200 hover:text-white text-sm transition-colors text-left cursor-pointer"
+                      whileHover={{
+                        x: 5,
+                        color: "#ffffff",
+                      }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 300,
+                        delay: 0.3 + i * 0.05,
+                      }}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      onClick={() => {
+                        setActiveTab("categories");
+                        setActiveCategory(category);
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                      }}
+                    >
+                      {category}
+                    </motion.button>
+                  )
+                )}
               </div>
             </div>
             <div>
